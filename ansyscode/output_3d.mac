@@ -1,0 +1,57 @@
+!从ANSYS中导出模态频率及振型数据，节点编号不连续
+/post1
+
+*GET,frenum, ACTIVE, 0, set,nset !取计算的模态子布数
+pointnum = 5!节点数
+*dim,disux,,frenum,pointnum
+*dim,disuy,,frenum,pointnum
+*dim,disuz,,frenum,pointnum
+*dim,disrx,,frenum,pointnum
+*dim,disry,,frenum,pointnum
+*dim,disrz,,frenum,pointnum
+*dim,modefq,,frenum,2
+
+*dim,nod,,1,pointnum
+csys,0
+
+!激励点
+nod(1,1) = 14
+!响应点
+nod(1,2) = 2769
+nod(1,3) = 2829
+nod(1,4) = 3084
+nod(1,5) = 3230
+
+*do,j,1,frenum
+  set,,, ,,, ,j
+  *get,modefq(j,2),mode,j,freq
+  *do,i,1,pointnum
+    *get,disux(j,i),node,nod(1,i),U,x
+    *get,disuy(j,i),node,nod(1,i),U,y
+    *get,disuz(j,i),node,nod(1,i),U,z
+    !*get,disrx(j,i),node,nod(1,i),rot,x
+    !*get,disry(j,i),node,nod(1,i),rot,y
+    !*get,disrz(j,i),node,nod(1,i),rot,z 
+  *enddo
+*enddo
+
+!输出模态振型
+*Cfopen,subineramp,txt
+*do,j,1,pointnum
+*vwrite,disux(1,j),disuy(1,j),disuz(1,j)
+(3E16.8,' ')
+*enddo
+*Cfclose
+
+!输出模态频率
+*Cfopen,freq,txt
+*vwrite,modefq(1,1),modefq(1,2)
+(2E16.8,' ')
+*Cfclose
+
+
+*del,all
+
+
+FINISH
+
